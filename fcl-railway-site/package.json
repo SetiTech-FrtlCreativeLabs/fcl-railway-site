@@ -1,0 +1,42 @@
+{
+  "name": "fcl-railway-site",
+  "version": "1.0.0",
+  "description": "Frtl Creative Labs - Full-stack e-commerce platform with crypto payments",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "cd server && npm run dev",
+    "client:dev": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "test": "cd server && npm test",
+    "lint": "cd server && npm run lint && cd ../client && npm run lint"
+  },
+  "keywords": [
+    "ecommerce",
+    "crypto",
+    "blockchain",
+    "stripe",
+    "react",
+    "nodejs",
+    "railway"
+  ],
+  "author": "Frtl Creative Labs",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/fcl-railway-site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/fcl-railway-site/issues"
+  },
+  "homepage": "https://github.com/your-username/fcl-railway-site#readme"
+}

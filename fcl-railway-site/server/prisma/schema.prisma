@@ -1,0 +1,168 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  displayName String?
+  role        Role     @default(USER)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  orders      Order[]
+  profile     Profile?
+
+  @@map("users")
+}
+
+model Profile {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  firstName   String?
+  lastName    String?
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  zip         String?
+  country     String?
+  avatar      String?
+  preferences Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Initiative {
+  id              Int      @id @default(autoincrement())
+  title           String
+  slug            String   @unique
+  summary         String
+  longDescription String?
+  heroImage       String?
+  gallery         Json?
+  featured        Boolean  @default(false)
+  order           Int      @default(0)
+  externalDocsLink String?
+  status          String   @default("active")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  products        Product[]
+
+  @@map("initiatives")
+}
+
+model Product {
+  id              Int      @id @default(autoincrement())
+  title           String
+  sku             String   @unique
+  price           Int      // Price in cents
+  currency        String   @default("USD")
+  description     String
+  images          Json?
+  inventoryCount  Int      @default(0)
+  initiativeId    String
+  metadata        Json?
+  stripePriceId   String?
+  cryptoEnabled   Boolean  @default(true)
+  featured        Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  initiative      Initiative @relation(fields: [initiativeId], references: [slug])
+
+  @@map("products")
+}
+
+model Order {
+  id                    Int      @id @default(autoincrement())
+  orderNumber           String   @unique
+  userId                Int
+  items                 String   // JSON string of order items
+  total                 Int      // Total in cents
+  currency              String   @default("USD")
+  status                OrderStatus @default(PENDING)
+  paymentMethod         String?
+  billingInfo           String   // JSON string
+  shippingInfo          String   // JSON string
+  stripePaymentIntentId String?
+  coinbaseInvoiceId     String?
+  uniqueCode            String?
+  blockchainTxId        String?
+  trackingNumber        String?
+  notes                 String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  user                  User     @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("new")
+  priority  String   @default("normal")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contact_messages")
+}
+
+model SiteSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String   // JSON string
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model NewsletterSubscription {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("newsletter_subscriptions")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
